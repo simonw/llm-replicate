@@ -31,3 +31,25 @@ def test_replicate_prompt(mock_class, user_path):
         "replicate/flan-t5-xl:7a216605843d87f5426a10d2cc6940485a232336ed04d655ef86b91e020e9210",
     )
     assert call.kwargs == {"input": {"prompt": "say hi"}}
+
+
+def test_add_model(user_path, requests_mock):
+    requests_mock.get(
+        "https://api.replicate.com/v1/models/a16z-infra/llama13b-v2-chat",
+        json={"latest_version": {"id": "llama2-id-123"}},
+    )
+    runner = CliRunner()
+    result = runner.invoke(
+        cli, ["replicate", "add", "a16z-infra/llama13b-v2-chat", "--alias", "llama2"]
+    )
+    assert result.exit_code == 0, result.output
+    # Should be in the models.json
+    models = json.loads((user_path / "replicate" / "models.json").read_text("utf-8"))
+    assert models == [
+        {
+            "model": "a16z-infra/llama13b-v2-chat",
+            "model_id": "a16z-infra-llama13b-v2-chat",
+            "version": "llama2-id-123",
+            "aliases": ["llama2"],
+        }
+    ]

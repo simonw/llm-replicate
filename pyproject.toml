@@ -10,6 +10,7 @@ classifiers = [
 ]
 dependencies = [
     "llm",
+    "requests-mock",
     # vendored_replicate:
     "requests",
     "packaging"
