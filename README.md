@@ -25,8 +25,7 @@ llm keys set replicate
 ```
 Enter key: <paste key here>
 ```
-
-To fetch and save details of the default set of Replicate models, run this:
+To fetch and save details of [the default collection](https://replicate.com/collections/language-models) of language models hosted on Replicate, run this:
 ```bash
 llm replicate fetch-models
 ```
@@ -41,6 +40,30 @@ llm models list
 Then run a prompt through a specific model like this:
 ```bash
 llm -m replicate-joehoover-falcon-40b-instruct "Ten great names for a pet pelican"
+```
+
+## Registering extra models
+
+To register additional models that are not included in the default [Language models collection](https://replicate.com/collections/language-models), find their ID on Replicate and use the `llm replicate add` command.
+
+For example, to add the [joehoover/falcon-40b-instruct](https://replicate.com/joehoover/falcon-40b-instruct) model, run this:
+
+```bash
+llm replicate add joehoover/falcon-40b-instruct --alias falcon
+```
+This adds the model with the alias `falcon` - you can have 0 or more aliases for a model.
+
+Now you can run it like this:
+```bash
+llm -m replicate-joehoover-falcon-40b-instruct "Three reasons to get a pet falcon"
+```
+Or using the alias like this:
+```bash
+llm -m falcon "Three reasons to get a pet falcon"
+```
+You can edit the list of models you have registered using the default `$EDITOR` like this:
+```bash
+llm replicate edit-models
 ```
 
 ## Development
