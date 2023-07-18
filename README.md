@@ -29,29 +29,75 @@ To fetch and save details of [the default collection](https://replicate.com/coll
 ```bash
 llm replicate fetch-models
 ```
+To add specific models that aren't listed in that collection, use the `llm replicate add` command.
+
+For the Llama 2 model from [a16z-infra/llama13b-v2-chat](https://replicate.com/a16z-infra/llama13b-v2-chat) run this:
+
+```bash
+llm replicate add a16z-infra/llama13b-v2-chat \
+  --chat --alias llama2
+```
+The `--chat` flag indicates that this is a chat model, which means it will be able to work with `-c` continue mode.
 
 ## Usage
 
-Run `llm models list` to see the list of models:
+To run a prompt against a model, pass its name or an alias to `llm -m`:
+```bash
+llm -m llama2 "Ten great names for a pet pelican"
+```
+
+> Sure, here are ten great names for a pet pelican:
+>
+> 1. Pelty
+> 2. Peanut
+> 3. Puddles
+> 4. Nibbles
+> 5. Fuzzy
+> 6. Gizmo
+> 7. Hank
+> 8. Luna
+> 9. Scooter
+> 10. Splishy
+>
+> I hope these suggestions help you find the perfect name for your pet pelican! Do you have any other questions?
+
+
+Chat models can support continuing conversations, for example:
+```bash
+llm -c 'Five more and make them more nautical'
+```
+> Ahoy matey! Here be five more nautical-themed names for yer pet pelican:
+>
+> 1. Captain Hook
+> 2. Anchoryn
+> 3. Seadog
+> 4. Plunder
+> 5. Pointe Pelican
+>
+> I hope these suggestions help ye find the perfect name for yer feathered friend! Do ye have any other questions, matey?
+
+Run `llm models list` to see the full list of models:
 
 ```bash
 llm models list
 ```
 You should see something like this:
 ```
-ReplicateModel: replicate-flan-t5-xl
-ReplicateModel: replicate-llama-7b
-ReplicateModel: replicate-gpt-j-6b
-ReplicateModel: replicate-dolly-v2-12b
-ReplicateModel: replicate-oasst-sft-1-pythia-12b
-ReplicateModel: replicate-stability-ai-stablelm-tuned-alpha-7b
-ReplicateModel: replicate-vicuna-13b
-ReplicateModel: replicate-replit-code-v1-3b
-ReplicateModel: replicate-replit-replit-code-v1-3b
+Replicate: replicate-flan-t5-xl
+Replicate: replicate-llama-7b
+Replicate: replicate-gpt-j-6b
+Replicate: replicate-dolly-v2-12b
+Replicate: replicate-oasst-sft-1-pythia-12b
+Replicate: replicate-stability-ai-stablelm-tuned-alpha-7b
+Replicate: replicate-vicuna-13b
+Replicate: replicate-replit-code-v1-3b
+Replicate: replicate-replit-replit-code-v1-3b
+Replicate: replicate-joehoover-falcon-40b-instruct (aliases: falcon)
+Replicate (chat): replicate-a16z-infra-llama13b-v2-chat (aliases: llama2)
 ```
 Then run a prompt through a specific model like this:
 ```bash
-llm -m replicate-llama-7b "Ten great names for a pet pelican"
+llm -m replicate-vicuna-13b "Five great names for a pet llama"
 ```
 
 ## Registering extra models
@@ -61,13 +107,15 @@ To register additional models that are not included in the default [Language mod
 For example, to add the [joehoover/falcon-40b-instruct](https://replicate.com/joehoover/falcon-40b-instruct) model, run this:
 
 ```bash
-llm replicate add joehoover/falcon-40b-instruct --alias falcon
+llm replicate add joehoover/falcon-40b-instruct \
+  --alias falcon
 ```
 This adds the model with the alias `falcon` - you can have 0 or more aliases for a model.
 
 Now you can run it like this:
 ```bash
-llm -m replicate-joehoover-falcon-40b-instruct "Three reasons to get a pet falcon"
+llm -m replicate-joehoover-falcon-40b-instruct \
+  "Three reasons to get a pet falcon"
 ```
 Or using the alias like this:
 ```bash
@@ -76,6 +124,31 @@ llm -m falcon "Three reasons to get a pet falcon"
 You can edit the list of models you have registered using the default `$EDITOR` like this:
 ```bash
 llm replicate edit-models
+```
+If you register a model using the `--chat` option that model will be treated slightly differently. Prompts sent to the model will be formatted like this:
+```
+User: user input here
+Assistant:
+```
+If you use `-c` [conversation mode](https://llm.datasette.io/en/stable/usage.html#continuing-a-conversation) the prompt will include previous messages in the conversation, like this:
+```
+User: Ten great names for a pet pelican
+Assistant: Sure, here are ten great names for a pet pelican:
+
+1. Pelty
+2. Peanut
+3. Puddles
+4. Nibbles
+5. Fuzzy
+6. Gizmo
+7. Hank
+8. Luna
+9. Scooter
+10. Splishy
+
+I hope these suggestions help you find the perfect name for your pet pelican! Do you have any other questions?
+User: Five more and make them more nautical
+Assistant:
 ```
 
 ## Development

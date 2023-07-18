@@ -38,16 +38,21 @@ def register_commands(cli):
 
     @replicate.command(name="add")
     @click.argument("model_id")
+    @click.option("--chat", is_flag=True, help="This is a chat model")
     @click.option("aliases", "--alias", multiple=True, help="Aliases for this model")
     @click.option("--version", help="Model version (defaults to latest)")
     @click.option("--key", "-k", help="Replicate API key")
-    def add_model(model_id, aliases, version, key):
+    def add_model(model_id, chat, aliases, version, key):
         """
         Register additional Replicate models with LLM
 
         Example usage:
 
             llm replicate add joehoover/falcon-40b-instruct
+
+        \b
+        Use --chat for "chat" models that should be prompted using
+        'User: ... \\nAssistant:' format.
         """
         if not version:
             # Fetch latest version from Replicate API
@@ -72,15 +77,17 @@ def register_commands(cli):
             models = json.loads(models_path.read_text())
         else:
             models = []
-        models.append(
-            {
-                "model": model_id,
-                "model_id": model_id.replace("/", "-"),
-                "version": version,
-                "aliases": aliases,
-            }
-        )
-        models_path.write_text(json.dumps(models, indent=2))
+        new_model = {
+            "model": model_id,
+            "model_id": model_id.replace("/", "-"),
+            "version": version,
+            "aliases": aliases,
+        }
+        if chat:
+            new_model["chat"] = True
+        updated_models = [model for model in models if model["model"] != model_id]
+        updated_models.append(new_model)
+        models_path.write_text(json.dumps(updated_models, indent=2))
 
     @replicate.command(name="edit-models")
     def edit_models():
@@ -105,6 +112,7 @@ def register_models(register):
                     owner=details["owner"],
                     name=details["name"],
                     version_id=details["latest_version"]["id"],
+                    chat=False,
                 ),
             )
 
@@ -118,6 +126,7 @@ def register_models(register):
                     owner=info["model"].split("/")[0],
                     name=info["model"].split("/")[1],
                     version_id=info["version"],
+                    chat=info.get("chat", False),
                 ),
                 aliases=aliases,
             )
@@ -128,7 +137,7 @@ class ReplicateModel(llm.Model):
     needs_key = "replicate"
     key_env_var = "REPLICATE_API_TOKEN"
 
-    def __init__(self, owner, name, version_id):
+    def __init__(self, owner, name, version_id, chat):
         model_id = "replicate-{}-{}".format(owner, name)
         if model_id.startswith("replicate-replicate-"):
             model_id = model_id[len("replicate-") :]
@@ -136,9 +145,36 @@ class ReplicateModel(llm.Model):
         self.version_id = version_id
         self.name = name
         self.owner = owner
+        self.chat = chat
+
+    def build_chat_prompt(self, prompt, conversation):
+        prompt_lines = []
+        if conversation is not None:
+            for prev_response in conversation.responses:
+                prompt_lines.extend(
+                    [
+                        f"User: {prev_response.prompt.prompt}\n",
+                        f"Assistant: {prev_response.text()}\n",
+                    ]
+                )
+
+        prompt_lines.extend(
+            [
+                f"User: {prompt.prompt}\n",
+                f"Assistant:",
+            ]
+        )
+        return prompt_lines
 
     def execute(self, prompt, stream, response, conversation):
         from . import vendored_replicate
+
+        if conversation and not self.chat:
+            raise llm.ModelError("Conversation mode is not supported")
+
+        lines = [prompt.prompt]
+        if self.chat:
+            lines = self.build_chat_prompt(prompt, conversation)
 
         client = vendored_replicate.Client(api_token=self.get_key())
         output = client.run(
@@ -147,9 +183,13 @@ class ReplicateModel(llm.Model):
                 name=self.name,
                 version_id=self.version_id,
             ),
-            input={"prompt": prompt.prompt},
+            input={"prompt": "".join(lines)},
         )
+        response._prompt_json = {"lines": lines}
         yield from output
+
+    def __str__(self) -> str:
+        return "Replicate{}: {}".format(" (chat)" if self.chat else "", self.model_id)
 
 
 def config_dir():
