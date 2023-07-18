@@ -107,19 +107,21 @@ def register_models(register):
                     owner=details["owner"],
                     name=details["name"],
                     version_id=details["latest_version"]["id"],
-                )
+                ),
             )
 
     models_path = config_dir() / "models.json"
     if models_path.exists():
         more_models = json.loads(models_path.read_text())
         for info in more_models:
+            aliases = info.get("aliases", [])
             register(
                 ReplicateModel(
                     owner=info["model"].split("/")[0],
                     name=info["model"].split("/")[1],
                     version_id=info["version"],
-                )
+                ),
+                aliases=aliases,
             )
 
 
