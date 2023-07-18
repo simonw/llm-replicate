@@ -1,8 +1,9 @@
-from click.testing import CliRunner
 import json
-from llm.cli import cli
 import pathlib
 from unittest.mock import Mock, patch
+
+from click.testing import CliRunner
+from llm.cli import cli
 
 flan_t5 = json.loads(
     (pathlib.Path(__file__).parent / "replicate-flan-t5-xl.json").read_text()
@@ -19,7 +20,7 @@ def test_replicate_prompt(mock_class, user_path):
     mock_class.return_value = mock_client
 
     (user_path / "replicate").mkdir()
-    true, false, null = True, False, None
+    true, false, null = True, False, None  # noqa
     (user_path / "replicate" / "fetch-models.json").write_text(
         json.dumps([flan_t5]),
         "utf-8",
