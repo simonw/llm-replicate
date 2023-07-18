@@ -84,7 +84,7 @@ class Client:
     def _headers(self) -> Dict[str, str]:
         return {
             "Authorization": f"Token {self._api_token()}",
-            "User-Agent": f"replicate-python/0.8.4",
+            "User-Agent": "replicate-python/0.8.4",
         }
 
     def _api_token(self) -> str:
