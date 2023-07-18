@@ -10,8 +10,9 @@ classifiers = [
 ]
 dependencies = [
     "llm",
-    # Fork of replicate-python that works with Pydantic 2.0:
-    "replicate @ https://github.com/simonw/replicate-python/archive/6c8edb74dce8492095de029602d37816db55fde8.zip"
+    # vendored_replicate:
+    "requests",
+    "packaging"
 ]
 requires-python = ">3.7"
 
