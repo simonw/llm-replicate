@@ -66,7 +66,7 @@ llm -m llama2 "Ten great names for a pet pelican"
 
 Chat models can support continuing conversations, for example:
 ```bash
-llm -c 'Five more and make them more nautical'
+llm -c "Five more and make them more nautical"
 ```
 > Ahoy matey! Here be five more nautical-themed names for yer pet pelican:
 >
