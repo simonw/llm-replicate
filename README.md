@@ -37,6 +37,18 @@ Run `llm models list` to see the list of models:
 ```bash
 llm models list
 ```
+You should see something like this:
+```
+ReplicateModel: replicate-flan-t5-xl
+ReplicateModel: replicate-llama-7b
+ReplicateModel: replicate-gpt-j-6b
+ReplicateModel: replicate-dolly-v2-12b
+ReplicateModel: replicate-oasst-sft-1-pythia-12b
+ReplicateModel: replicate-stability-ai-stablelm-tuned-alpha-7b
+ReplicateModel: replicate-vicuna-13b
+ReplicateModel: replicate-replit-code-v1-3b
+ReplicateModel: replicate-replit-replit-code-v1-3b
+```
 Then run a prompt through a specific model like this:
 ```bash
 llm -m replicate-llama-7b "Ten great names for a pet pelican"
