@@ -39,7 +39,7 @@ llm models list
 ```
 Then run a prompt through a specific model like this:
 ```bash
-llm -m replicate-joehoover-falcon-40b-instruct "Ten great names for a pet pelican"
+llm -m replicate-llama-7b "Ten great names for a pet pelican"
 ```
 
 ## Registering extra models
