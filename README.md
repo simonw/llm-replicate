@@ -5,7 +5,7 @@
 [![Tests](https://github.com/simonw/llm-replicate/workflows/Test/badge.svg)](https://github.com/simonw/llm-replicate/actions?query=workflow%3ATest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/llm-replicate/blob/main/LICENSE)
 
-[LLM](https://llm.datasette.io/) plugin for models hosted on Replicate
+[LLM](https://llm.datasette.io/) plugin for models hosted on [Replicate](https://replicate.com/)
 
 ## Installation
 
