@@ -84,7 +84,7 @@ class Client:
     def _headers(self) -> Dict[str, str]:
         return {
             "Authorization": f"Token {self._api_token()}",
-            "User-Agent": f"replicate-python/0.8.4",
+            "User-Agent": "replicate-python/0.8.4",
         }
 
     def _api_token(self) -> str:
@@ -94,9 +94,9 @@ class Client:
             token = os.environ.get("REPLICATE_API_TOKEN")
         if not token:
             raise ReplicateError(
-                """No API token provided. You need to set the REPLICATE_API_TOKEN environment variable or create a client with `replicate.Client(api_token=...)`.
-
-You can find your API key on https://replicate.com"""
+                """No API token provided. You need to set the REPLICATE_API_TOKEN environment 
+                variable or create a client with `replicate.Client(api_token=...)`.
+                You can find your API key on https://replicate.com"""
             )
         return token
 

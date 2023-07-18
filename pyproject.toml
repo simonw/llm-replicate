@@ -18,6 +18,33 @@ requires-python = ">3.7"
 
 [project.optional-dependencies]
 test = ["pytest"]
+lint = ["ruff", "black"]
+
+[tool.ruff]
+line-length = 120
+select = ["E", "F", "I"]
+fixable = ["A", "B", "C", "D", "E", "F", "I"]
+exclude = [
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "migrations",
+    "__pypackages__",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv"
+]
+
+[tool.ruff.isort]
+section-order = ["future", "standard-library", "third-party",  "first-party", "local-folder"]
 
 [project.urls]
 Homepage = "https://github.com/simonw/llm-replicate"

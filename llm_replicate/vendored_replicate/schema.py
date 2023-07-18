@@ -1,6 +1,7 @@
 from packaging import version
 
-# TODO: this code is shared with replicate's backend. Maybe we should put it in the Cog Python package as the source of truth?
+# TODO: this code is shared with replicate's backend. Maybe we should put it in the Cog Python package
+#  as the source of truth?
 
 
 def version_has_no_array_type(cog_version: str) -> bool:
