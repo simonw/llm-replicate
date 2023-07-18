@@ -1,9 +1,7 @@
 import click
 import json
 import llm
-import replicate
 import requests
-import yaml
 
 
 @llm.hookimpl
@@ -140,7 +138,9 @@ class ReplicateModel(llm.Model):
         self.owner = owner
 
     def execute(self, prompt, stream, response, conversation):
-        client = replicate.Client(api_token=self.get_key())
+        from . import vendored_replicate
+
+        client = vendored_replicate.Client(api_token=self.get_key())
         output = client.run(
             "{owner}/{name}:{version_id}".format(
                 owner=self.owner,

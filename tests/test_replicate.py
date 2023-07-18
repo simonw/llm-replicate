@@ -2,16 +2,14 @@ from click.testing import CliRunner
 import json
 from llm.cli import cli
 import pathlib
-import pytest
 from unittest.mock import Mock, patch
-import replicate
 
 flan_t5 = json.loads(
     (pathlib.Path(__file__).parent / "replicate-flan-t5-xl.json").read_text()
 )
 
 
-@patch("replicate.Client")
+@patch("llm_replicate.vendored_replicate.Client")
 def test_replicate_prompt(mock_class, user_path):
     runner = CliRunner()
 
