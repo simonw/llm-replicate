@@ -9,7 +9,9 @@
 
 ## Installation
 
-Install this plugin in the same environment as LLM.
+First, [install the LLM command-line utility](https://llm.datasette.io/en/stable/setup.html).
+
+Now install this plugin in the same environment as LLM.
 ```bash
 llm install llm-replicate
 ```
