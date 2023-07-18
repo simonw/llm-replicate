@@ -11,6 +11,4 @@ def user_path(tmpdir):
 @pytest.fixture(autouse=True)
 def env_setup(monkeypatch, user_path):
     monkeypatch.setenv("LLM_USER_PATH", str(user_path))
-    monkeypatch.setenv(
-        "REPLICATE_API_TOKEN", "xxx"
-    )
+    monkeypatch.setenv("REPLICATE_API_TOKEN", "xxx")
