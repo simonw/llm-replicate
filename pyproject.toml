@@ -1,0 +1,27 @@
+[project]
+name = "llm-replicate"
+version = "0.1"
+description = "LLM plugin for models hosted on Replicate"
+readme = "README.md"
+authors = [{name = "Simon Willison"}]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "License :: OSI Approved :: Apache Software License"
+]
+dependencies = [
+    "llm",
+    # Fork of replicate-python that works with Pydantic 2.0:
+    "replicate @ https://github.com/simonw/replicate-python/archive/6c8edb74dce8492095de029602d37816db55fde8.zip"
+]
+requires-python = ">3.7"
+
+[project.optional-dependencies]
+test = ["pytest", "responses"]
+
+[project.urls]
+Homepage = "https://github.com/simonw/llm-replicate"
+Changelog = "https://github.com/simonw/llm-replicate/releases"
+Issues = "https://github.com/simonw/llm-replicate/issues"
+
+[project.entry-points.llm]
+replicate = "llm_replicate"

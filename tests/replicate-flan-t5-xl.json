@@ -1,0 +1,493 @@
+{
+  "url": "https://replicate.com/replicate/flan-t5-xl",
+  "owner": "replicate",
+  "name": "flan-t5-xl",
+  "description": "A language model by Google for tasks like classification, summarization, and more",
+  "visibility": "public",
+  "github_url": "https://github.com/replicate/cog-flan-models",
+  "paper_url": "https://arxiv.org/abs/2210.11416",
+  "license_url": "https://github.com/replicate/cog-flan-models/blob/main/LICENSE",
+  "run_count": 57517,
+  "cover_image_url": "https://tjzk.replicate.delivery/models_models_cover_image/e5e20eda-e350-4902-a235-6409c8847b70/flan.png",
+  "default_example": {
+    "completed_at": "2023-03-03T06:25:29.282546Z",
+    "created_at": "2023-03-03T06:20:57.605544Z",
+    "error": null,
+    "id": "dviccvpuavfl3iuu3guhfpe2ju",
+    "input": {
+      "top_p": "0.95",
+      "prompt": "Answer the following yes/no question by reasoning step by step. Can a dog drive a car?",
+      "max_length": 50,
+      "temperature": "0.7",
+      "repetition_penalty": 1
+    },
+    "logs": null,
+    "metrics": {
+      "predict_time": 2.88226
+    },
+    "output": [
+      "Dogs do not have a drivers license nor can they operate a car. Therefore, the final answer is no."
+    ],
+    "started_at": "2023-03-03T06:25:26.400286Z",
+    "status": "succeeded",
+    "urls": {
+      "get": "https://api.replicate.com/v1/predictions/dviccvpuavfl3iuu3guhfpe2ju",
+      "cancel": "https://api.replicate.com/v1/predictions/dviccvpuavfl3iuu3guhfpe2ju/cancel"
+    },
+    "version": "1457f256622cd45415aa70c02105a917b39dc96e58601d7c2df5a30d2e3092e7",
+    "webhook_completed": null
+  },
+  "latest_version": {
+    "id": "7a216605843d87f5426a10d2cc6940485a232336ed04d655ef86b91e020e9210",
+    "created_at": "2023-04-28T19:11:45.404991Z",
+    "cog_version": "0.7.0-beta17",
+    "openapi_schema": {
+      "info": {
+        "title": "Cog",
+        "version": "0.1.0"
+      },
+      "paths": {
+        "/": {
+          "get": {
+            "summary": "Root",
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "title": "Response Root  Get"
+                    }
+                  }
+                },
+                "description": "Successful Response"
+              }
+            },
+            "operationId": "root__get"
+          }
+        },
+        "/shutdown": {
+          "post": {
+            "summary": "Start Shutdown",
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "title": "Response Start Shutdown Shutdown Post"
+                    }
+                  }
+                },
+                "description": "Successful Response"
+              }
+            },
+            "operationId": "start_shutdown_shutdown_post"
+          }
+        },
+        "/predictions": {
+          "post": {
+            "summary": "Predict",
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PredictionResponse"
+                    }
+                  }
+                },
+                "description": "Successful Response"
+              },
+              "422": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/HTTPValidationError"
+                    }
+                  }
+                },
+                "description": "Validation Error"
+              }
+            },
+            "parameters": [
+              {
+                "in": "header",
+                "name": "prefer",
+                "schema": {
+                  "type": "string",
+                  "title": "Prefer"
+                },
+                "required": false
+              }
+            ],
+            "description": "Run a single prediction on the model",
+            "operationId": "predict_predictions_post",
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PredictionRequest"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/health-check": {
+          "get": {
+            "summary": "Healthcheck",
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "title": "Response Healthcheck Health Check Get"
+                    }
+                  }
+                },
+                "description": "Successful Response"
+              }
+            },
+            "operationId": "healthcheck_health_check_get"
+          }
+        },
+        "/predictions/{prediction_id}": {
+          "put": {
+            "summary": "Predict Idempotent",
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/PredictionResponse"
+                    }
+                  }
+                },
+                "description": "Successful Response"
+              },
+              "422": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/HTTPValidationError"
+                    }
+                  }
+                },
+                "description": "Validation Error"
+              }
+            },
+            "parameters": [
+              {
+                "in": "path",
+                "name": "prediction_id",
+                "schema": {
+                  "type": "string",
+                  "title": "Prediction ID"
+                },
+                "required": true
+              },
+              {
+                "in": "header",
+                "name": "prefer",
+                "schema": {
+                  "type": "string",
+                  "title": "Prefer"
+                },
+                "required": false
+              }
+            ],
+            "description": "Run a single prediction on the model (idempotent creation).",
+            "operationId": "predict_idempotent_predictions__prediction_id__put",
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/PredictionRequest"
+                      }
+                    ],
+                    "title": "Prediction Request"
+                  }
+                }
+              },
+              "required": true
+            }
+          }
+        },
+        "/predictions/{prediction_id}/cancel": {
+          "post": {
+            "summary": "Cancel",
+            "responses": {
+              "200": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "title": "Response Cancel Predictions  Prediction Id  Cancel Post"
+                    }
+                  }
+                },
+                "description": "Successful Response"
+              },
+              "422": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/HTTPValidationError"
+                    }
+                  }
+                },
+                "description": "Validation Error"
+              }
+            },
+            "parameters": [
+              {
+                "in": "path",
+                "name": "prediction_id",
+                "schema": {
+                  "type": "string",
+                  "title": "Prediction ID"
+                },
+                "required": true
+              }
+            ],
+            "description": "Cancel a running prediction",
+            "operationId": "cancel_predictions__prediction_id__cancel_post"
+          }
+        }
+      },
+      "openapi": "3.0.2",
+      "components": {
+        "schemas": {
+          "Input": {
+            "type": "object",
+            "title": "Input",
+            "required": [
+              "prompt"
+            ],
+            "properties": {
+              "debug": {
+                "type": "boolean",
+                "title": "Debug",
+                "default": false,
+                "x-order": 5,
+                "description": "provide debugging output in logs"
+              },
+              "top_p": {
+                "type": "number",
+                "title": "Top P",
+                "default": 1,
+                "maximum": 1,
+                "minimum": 0.01,
+                "x-order": 3,
+                "description": "When decoding text, samples from the top p percentage of most likely tokens; lower to ignore less likely tokens"
+              },
+              "prompt": {
+                "type": "string",
+                "title": "Prompt",
+                "x-order": 0,
+                "description": "Prompt to send to FLAN-T5."
+              },
+              "max_length": {
+                "type": "integer",
+                "title": "Max Length",
+                "default": 50,
+                "minimum": 1,
+                "x-order": 1,
+                "description": "Maximum number of tokens to generate. A word is generally 2-3 tokens"
+              },
+              "temperature": {
+                "type": "number",
+                "title": "Temperature",
+                "default": 0.75,
+                "maximum": 5,
+                "minimum": 0.01,
+                "x-order": 2,
+                "description": "Adjusts randomness of outputs, greater than 1 is random and 0 is deterministic, 0.75 is a good starting value."
+              },
+              "repetition_penalty": {
+                "type": "number",
+                "title": "Repetition Penalty",
+                "default": 1,
+                "maximum": 5,
+                "minimum": 0.01,
+                "x-order": 4,
+                "description": "Penalty for repeated words in generated text; 1 is no penalty, values greater than 1 discourage repetition, less than 1 encourage it."
+              }
+            }
+          },
+          "Output": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "Output",
+            "x-cog-array-type": "iterator",
+            "x-cog-array-display": "concatenate"
+          },
+          "Status": {
+            "enum": [
+              "starting",
+              "processing",
+              "succeeded",
+              "canceled",
+              "failed"
+            ],
+            "type": "string",
+            "title": "Status",
+            "description": "An enumeration."
+          },
+          "WebhookEvent": {
+            "enum": [
+              "start",
+              "output",
+              "logs",
+              "completed"
+            ],
+            "type": "string",
+            "title": "WebhookEvent",
+            "description": "An enumeration."
+          },
+          "ValidationError": {
+            "type": "object",
+            "title": "ValidationError",
+            "required": [
+              "loc",
+              "msg",
+              "type"
+            ],
+            "properties": {
+              "loc": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                },
+                "title": "Location"
+              },
+              "msg": {
+                "type": "string",
+                "title": "Message"
+              },
+              "type": {
+                "type": "string",
+                "title": "Error Type"
+              }
+            }
+          },
+          "PredictionRequest": {
+            "type": "object",
+            "title": "PredictionRequest",
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Id"
+              },
+              "input": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "webhook": {
+                "type": "string",
+                "title": "Webhook",
+                "format": "uri",
+                "maxLength": 65536,
+                "minLength": 1
+              },
+              "created_at": {
+                "type": "string",
+                "title": "Created At",
+                "format": "date-time"
+              },
+              "output_file_prefix": {
+                "type": "string",
+                "title": "Output File Prefix"
+              },
+              "webhook_events_filter": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WebhookEvent"
+                },
+                "default": [
+                  "logs",
+                  "start",
+                  "output",
+                  "completed"
+                ],
+                "uniqueItems": true
+              }
+            }
+          },
+          "PredictionResponse": {
+            "type": "object",
+            "title": "PredictionResponse",
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "Id"
+              },
+              "logs": {
+                "type": "string",
+                "title": "Logs",
+                "default": ""
+              },
+              "error": {
+                "type": "string",
+                "title": "Error"
+              },
+              "input": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "output": {
+                "$ref": "#/components/schemas/Output"
+              },
+              "status": {
+                "$ref": "#/components/schemas/Status"
+              },
+              "metrics": {
+                "type": "object",
+                "title": "Metrics"
+              },
+              "version": {
+                "type": "string",
+                "title": "Version"
+              },
+              "created_at": {
+                "type": "string",
+                "title": "Created At",
+                "format": "date-time"
+              },
+              "started_at": {
+                "type": "string",
+                "title": "Started At",
+                "format": "date-time"
+              },
+              "completed_at": {
+                "type": "string",
+                "title": "Completed At",
+                "format": "date-time"
+              }
+            }
+          },
+          "HTTPValidationError": {
+            "type": "object",
+            "title": "HTTPValidationError",
+            "properties": {
+              "detail": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ValidationError"
+                },
+                "title": "Detail"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
