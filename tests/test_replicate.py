@@ -26,3 +26,8 @@ def test_replicate_prompt(mock_class, user_path):
     result = runner.invoke(cli, ["-m", "replicate-flan-t5-xl", "say hi"])
     assert result.exit_code == 0, result.output
     assert result.output == "hello world\n"
+    call = mock_client.run.call_args_list[0]
+    assert call.args == (
+        "replicate/flan-t5-xl:7a216605843d87f5426a10d2cc6940485a232336ed04d655ef86b91e020e9210",
+    )
+    assert call.kwargs == {"input": {"prompt": "say hi"}}
