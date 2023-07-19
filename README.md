@@ -41,6 +41,12 @@ llm replicate add a16z-infra/llama13b-v2-chat \
 ```
 The `--chat` flag indicates that this is a chat model, which means it will be able to work with `-c` continue mode.
 
+Here's the [70b version](https://replicate.com/replicate/llama70b-v2-chat) of that model:
+```bash
+llm replicate add \
+  replicate/llama70b-v2-chat \
+  --chat --alias llama70b
+```
 ## Usage
 
 To run a prompt against a model, pass its name or an alias to `llm -m`:
