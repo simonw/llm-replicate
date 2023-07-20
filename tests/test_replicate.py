@@ -130,8 +130,19 @@ def test_chat_model_prompt(mock_class, user_path, requests_mock):
     ]
 
 
-@pytest.mark.parametrize("skip_existing", (False, True))
-def test_fetch_predictions(user_path, requests_mock, skip_existing):
+@pytest.mark.parametrize(
+    "in_db,api_status,should_skip",
+    (
+        # If it's not in the DB, fetch it
+        (False, None, False),
+        # If it's in the DB and status is starting/processing, fetch it
+        (True, "starting", False),
+        (True, "processing", False),
+        # If it's in the DB and status is complete, skip it
+        (True, "complete", True),
+    ),
+)
+def test_fetch_predictions(user_path, requests_mock, in_db, api_status, should_skip):
     db = sqlite_utils.Database(str(user_path / "logs.db"))
     # Register a model with a version_id to test _model_guess
     (user_path / "replicate").mkdir()
@@ -148,14 +159,17 @@ def test_fetch_predictions(user_path, requests_mock, skip_existing):
         "utf-8",
     )
     assert not db["replicate_predictions"].exists()
-    if skip_existing:
+    if in_db:
         db["replicate_predictions"].insert(
             {
                 "id": "prediction-2",
                 "blah": "blah",
                 "_model_guess": None,
                 "version": "version-2",
-                "completed_at": "2021-08-31T18:00:00.000000Z",
+                "completed_at": None
+                if api_status != "complete"
+                else "2021-08-31T18:00:00.000000Z",
+                "status": api_status,
             },
             pk="id",
         )
@@ -193,6 +207,7 @@ def test_fetch_predictions(user_path, requests_mock, skip_existing):
             "blah": "blah",
             "version": "version-1",
             "completed_at": "2021-08-31T18:00:00.000000Z",
+            "status": "complete",
         },
     )
     pred2 = requests_mock.get(
@@ -202,6 +217,7 @@ def test_fetch_predictions(user_path, requests_mock, skip_existing):
             "blah": "blah",
             "version": "version-2",
             "completed_at": "2021-08-31T18:00:00.000000Z",
+            "status": api_status,
         },
     )
     runner = CliRunner()
@@ -216,6 +232,7 @@ def test_fetch_predictions(user_path, requests_mock, skip_existing):
         "_model_guess": "a16z-infra/llama13b-v2-chat",
         "version": "version-1",
         "completed_at": "2021-08-31T18:00:00.000000Z",
+        "status": "complete",
     }
     assert db["replicate_predictions"].get("prediction-2") == {
         "id": "prediction-2",
@@ -223,9 +240,10 @@ def test_fetch_predictions(user_path, requests_mock, skip_existing):
         "_model_guess": None,
         "version": "version-2",
         "completed_at": "2021-08-31T18:00:00.000000Z",
+        "status": api_status,
     }
 
-    if skip_existing:
+    if should_skip:
         # Only first prediction URL should have been fetched
         assert pred1.called
         assert not pred2.called

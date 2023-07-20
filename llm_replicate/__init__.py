@@ -128,7 +128,7 @@ def register_commands(cli):
                     if row["completed_at"]:
                         return True
                     # No completed_at, check if it's still running
-                    if row["status"] not in ("starting", "processing"):
+                    if row["status"] in ("starting", "processing"):
                         return False
                     return True
                 except sqlite_utils.db.NotFoundError:
@@ -183,7 +183,7 @@ def register_commands(cli):
         ) as bar:
             for url in bar:
                 info = get_prediction(url)
-                table.insert(info, pk="id", replace=True)
+                table.insert(info, pk="id", replace=True, alter=True)
 
 
 @llm.hookimpl
