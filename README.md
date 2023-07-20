@@ -166,9 +166,11 @@ Replicate logs all predictions made against models. You can fetch all of these p
 ```bash
 llm replicate fetch-predictions
 ```
-This will create a table in your LLM `logs.db` database called `replicate_predictions`.
+This will create or populate a table in your LLM `logs.db` database called `replicate_predictions`.
 
 The data in this table will cover ALL Replicate models, not just language models that have been queried using this tool.
+
+Running `llm replicate fetch-predictions` multiple times will only fetch predictions that have been created since the last time the command was run.
 
 To browse the resulting data in [Datasette](https://datasette.io/), run this:
 ```bash
