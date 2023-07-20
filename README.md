@@ -159,6 +159,44 @@ User: Five more and make them more nautical
 Assistant:
 ```
 
+## Fetching all Replicate predictions
+
+Replicate logs all predictions made against models. You can fetch all of these predictions using the `llm replicate fetch-predictions` command:
+
+```bash
+llm replicate fetch-predictions
+```
+This will create or populate a table in your LLM `logs.db` database called `replicate_predictions`.
+
+The data in this table will cover ALL Replicate models, not just language models that have been queried using this tool.
+
+Running `llm replicate fetch-predictions` multiple times will only fetch predictions that have been created since the last time the command was run.
+
+To browse the resulting data in [Datasette](https://datasette.io/), run this:
+```bash
+datasette "$(llm logs path)"
+```
+The schema for that table will look like this:
+```sql
+CREATE TABLE [replicate_predictions] (
+   [id] TEXT PRIMARY KEY,
+   [_model_guess] TEXT,
+   [completed_at] TEXT,
+   [created_at] TEXT,
+   [error] TEXT,
+   [input] TEXT,
+   [logs] TEXT,
+   [metrics] TEXT,
+   [output] TEXT,
+   [started_at] TEXT,
+   [status] TEXT,
+   [urls] TEXT,
+   [version] TEXT,
+   [webhook_completed] TEXT
+)
+```
+This schema may change if the Replicate API adds new fields in the future.
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
