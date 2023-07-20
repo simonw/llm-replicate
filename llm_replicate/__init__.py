@@ -3,6 +3,7 @@ import json
 import llm
 import replicate
 import requests
+import sqlite_utils
 
 
 @llm.hookimpl
@@ -99,6 +100,64 @@ def register_commands(cli):
         if not models_path.exists():
             models_path.write_text("[]")
         click.edit(filename=str(models_path))
+
+    @replicate.command(name="fetch-predictions")
+    @click.option("--key", "-k", help="Replicate API key")
+    def fetch_predictions(key):
+        """
+        Fetch data on all Replicate predictions, save to SQLite replicate_predictions
+
+        Example usage:
+
+            llm replicate fetch-predictions
+        """
+        token = llm.get_key(key, "replicate", env_var="REPLICATE_API_TOKEN")
+        next_url = "https://api.replicate.com/v1/predictions"
+        db = sqlite_utils.Database(llm.user_dir() / "logs.db")
+        table = db["replicate_predictions"]
+
+        # Need all Replicate models to guess model name
+        version_to_model = {
+            ma.model.version_id: "{}/{}".format(ma.model.owner, ma.model.name)
+            for ma in llm.get_models_with_aliases()
+            if isinstance(ma.model, ReplicateModel)
+        }
+
+        def get_prediction(url):
+            print(url)
+            r = requests.get(url, headers={"Authorization": "Token {}".format(token)})
+            if r.status_code != 200:
+                raise click.ClickException(
+                    "Error fetching prediction details: {}".format(url)
+                )
+            data = r.json()
+            # Guess the model name, rewrite JSON with _model_guess after id
+            info = {}
+            info["id"] = data.pop("id")
+            info["_model_guess"] = version_to_model.get(data["version"])
+            # Copy remaining keys
+            for key, value in data.items():
+                info[key] = value
+            return info
+
+        while next_url:
+            response = requests.get(
+                next_url, headers={"Authorization": "Token {}".format(token)}
+            )
+            if response.status_code != 200:
+                raise click.ClickException(
+                    "Error fetching model details: {}".format(response.text)
+                )
+            data = response.json()
+            next_url = data.get("next")
+            table.insert_all(
+                (get_prediction(result["urls"]["get"]) for result in data["results"]),
+                pk="id",
+                alter=True,
+                replace=True,
+                batch_size=1,
+            )
+        click.echo("{} rows in {}".format(table.count, table.name), err=True)
 
 
 @llm.hookimpl
