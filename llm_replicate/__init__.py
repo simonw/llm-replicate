@@ -1,6 +1,7 @@
 import click
 import json
 import llm
+import replicate
 import requests
 
 
@@ -167,8 +168,6 @@ class ReplicateModel(llm.Model):
         return prompt_lines
 
     def execute(self, prompt, stream, response, conversation):
-        from . import vendored_replicate
-
         if conversation and not self.chat:
             raise llm.ModelError("Conversation mode is not supported")
 
@@ -176,7 +175,7 @@ class ReplicateModel(llm.Model):
         if self.chat:
             lines = self.build_chat_prompt(prompt, conversation)
 
-        client = vendored_replicate.Client(api_token=self.get_key())
+        client = replicate.Client(api_token=self.get_key())
         output = client.run(
             "{owner}/{name}:{version_id}".format(
                 owner=self.owner,

@@ -11,7 +11,7 @@ flan_t5 = json.loads(
 )
 
 
-@patch("llm_replicate.vendored_replicate.Client")
+@patch("replicate.Client")
 def test_replicate_prompt(mock_class, user_path):
     runner = CliRunner()
 
@@ -67,7 +67,7 @@ def test_add_model(user_path, requests_mock, chat):
     assert models == [expected]
 
 
-@patch("llm_replicate.vendored_replicate.Client")
+@patch("replicate.Client")
 def test_chat_model_prompt(mock_class, user_path, requests_mock):
     # First register that model, re-using existing test
     test_add_model(user_path, requests_mock, chat=True)
