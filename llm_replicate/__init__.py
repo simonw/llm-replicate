@@ -112,9 +112,27 @@ def register_commands(cli):
             llm replicate fetch-predictions
         """
         token = llm.get_key(key, "replicate", env_var="REPLICATE_API_TOKEN")
-        next_url = "https://api.replicate.com/v1/predictions"
         db = sqlite_utils.Database(llm.user_dir() / "logs.db")
         table = db["replicate_predictions"]
+
+        if not table.exists():
+
+            def id_exists(id):
+                return False
+
+        else:
+
+            def id_exists(id):
+                try:
+                    row = table.get(id)
+                    if row["completed_at"]:
+                        return True
+                    # No completed_at, check if it's still running
+                    if row["status"] not in ("starting", "processing"):
+                        return False
+                    return True
+                except sqlite_utils.db.NotFoundError:
+                    return False
 
         # Need all Replicate models to guess model name
         version_to_model = {
@@ -123,8 +141,27 @@ def register_commands(cli):
             if isinstance(ma.model, ReplicateModel)
         }
 
+        # First we fetch a list of all predictions to fetch - to get the total count
+        # so we can show a progress bar
+        next_url = "https://api.replicate.com/v1/predictions"
+        to_fetch = []
+        while next_url:
+            response = requests.get(
+                next_url, headers={"Authorization": "Token {}".format(token)}
+            )
+            if response.status_code != 200:
+                raise click.ClickException(
+                    "Error fetching model details: {}".format(response.text)
+                )
+            data = response.json()
+            next_url = data.get("next")
+            # For each one check if we already have it
+            for result in data["results"]:
+                id = result["id"]
+                if not id_exists(id):
+                    to_fetch.append(result["urls"]["get"])
+
         def get_prediction(url):
-            print(url)
             r = requests.get(url, headers={"Authorization": "Token {}".format(token)})
             if r.status_code != 200:
                 raise click.ClickException(
@@ -140,24 +177,13 @@ def register_commands(cli):
                 info[key] = value
             return info
 
-        while next_url:
-            response = requests.get(
-                next_url, headers={"Authorization": "Token {}".format(token)}
-            )
-            if response.status_code != 200:
-                raise click.ClickException(
-                    "Error fetching model details: {}".format(response.text)
-                )
-            data = response.json()
-            next_url = data.get("next")
-            table.insert_all(
-                (get_prediction(result["urls"]["get"]) for result in data["results"]),
-                pk="id",
-                alter=True,
-                replace=True,
-                batch_size=1,
-            )
-        click.echo("{} rows in {}".format(table.count, table.name), err=True)
+        # Fetch URLs, with a progress bar
+        with click.progressbar(
+            to_fetch, label="Fetching predictions", show_eta=True, show_pos=True
+        ) as bar:
+            for url in bar:
+                info = get_prediction(url)
+                table.insert(info, pk="id", replace=True)
 
 
 @llm.hookimpl
