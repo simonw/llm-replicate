@@ -174,7 +174,7 @@ Running `llm replicate fetch-predictions` multiple times will only fetch predict
 
 To browse the resulting data in [Datasette](https://datasette.io/), run this:
 ```bash
-datasette "$(llm logs path)
+datasette "$(llm logs path)"
 ```
 The schema for that table will look like this:
 ```sql
