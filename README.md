@@ -201,7 +201,7 @@ This schema may change if the Replicate API adds new fields in the future.
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
 
-    cd llm-palm
+    cd llm-replicate
     python3 -m venv venv
     source venv/bin/activate
 
