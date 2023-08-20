@@ -200,15 +200,16 @@ This schema may change if the Replicate API adds new fields in the future.
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
-
-    cd llm-palm
-    python3 -m venv venv
-    source venv/bin/activate
-
+```bash
+cd llm-replicate
+python3 -m venv venv
+source venv/bin/activate
+```
 Now install the dependencies and test dependencies:
-
-    pip install -e '.[test]'
-
+```bash
+pip install -e '.[test]'
+```
 To run the tests:
-
-    pytest
+```bash
+pytest
+```
