@@ -193,6 +193,9 @@ def register_models(register):
     if fetch_models_path.exists():
         models = json.loads(fetch_models_path.read_text())
         for details in models:
+            if not details["latest_version"]:
+                print(f"Skipping model '{details['name']}'")
+                continue
             register(
                 ReplicateModel(
                     owner=details["owner"],
