@@ -194,7 +194,7 @@ def register_models(register):
         models = json.loads(fetch_models_path.read_text())
         for details in models:
             if not details["latest_version"]:
-                print(f"Skipping model '{details['name']}'")
+                # Skipping some broken models
                 continue
             register(
                 ReplicateModel(
